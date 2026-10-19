@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>طلب تقرير محفظة — Solana Wallet Report</title>
+<style>
+:root{--bg:#0f1115;--card:#171a21;--line:#232834;--tx:#e6e8ee;--mut:#9aa4b2;--ok:#59d18a;--bad:#f0747a;--acc:#6ea8fe}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:28px 18px 60px}
+h1{font-size:24px;margin:0 0 6px}
+.sub{color:var(--mut);font-size:13.5px;line-height:1.6}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:16px}
+label{display:block;font-size:12px;color:var(--mut);margin:0 0 6px;letter-spacing:.03em}
+input,select,textarea{width:100%;background:#0d1016;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit}
+input:focus,select:focus{outline:2px solid var(--acc);outline-offset:0;border-color:transparent}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.f{margin-bottom:12px}
+.hint{font-size:11.5px;color:var(--mut);margin-top:6px;line-height:1.5}
+.err{color:var(--bad);font-size:12px;margin-top:6px;display:none}
+.ok{color:var(--ok);font-size:12px;margin-top:6px;display:none}
+.pk{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pk label{border:1px solid var(--line);border-radius:10px;padding:10px;cursor:pointer;margin:0;color:var(--tx);font-size:13px;background:#0d1016}
+.pk input{display:none}
+.pk input:checked+span{color:var(--acc)}
+.pk label:has(input:checked){border-color:var(--acc);background:#111a2b}
+.pk b{display:block;font-size:17px;margin-bottom:4px}
+.pk span,.pk small{display:block;line-height:1.5}
+.pk small{color:var(--mut);font-size:11px;margin-top:2px}
+button{border:0;border-radius:9px;padding:12px 16px;font-size:14px;font-weight:600;cursor:pointer;background:var(--acc);color:#06101f}
+button.ghost{background:#1b2130;color:var(--tx);border:1px solid var(--line)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.total{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:14px}
+.total b{font-size:20px}
+.note{font-size:11.5px;color:var(--mut);margin-top:14px;line-height:1.6}
+#out{display:none;direction:ltr;text-align:left;white-space:pre-wrap;background:#0d1016;border:1px solid var(--line);border-radius:8px;padding:12px;font-family:ui-monospace,Consolas,monospace;font-size:12px;margin-top:12px}
+@media(max-width:560px){.row{grid-template-columns:1fr}.pk{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>تقرير نشاط محفظة سولانا</h1>
+  <div class="sub">Solana Wallet Activity Report — $19 · تسليم خلال دقائق · تقرير HTML + PDF + CSV.
+  <br>أدخل <b>العنوان العام فقط</b>. لا نطلب عبارة الاسترداد أو المفتاح الخاص، ولا ربط محفظة.</div>
+
+  <form id="f" novalidate>
+    <div class="card">
+      <div class="f">
+        <label for="addr">عنوان المحفظة العامة / Public wallet address</label>
+        <input id="addr" dir="ltr" autocomplete="off" spellcheck="false" placeholder="H8sMJSCQ...">
+        <div class="hint">32–44 حرفاً من base58، بدون مسافات. ابحث عنه في محفظتك تحت «Receive».</div>
+        <div class="err" id="addrErr">العنوان غير صالح — تحقق من الطول والأحرف.</div>
+        <div class="ok" id="addrOk">العنوان صحيح شكلياً.</div>
+      </div>
+      <div class="f">
+        <label for="name">الاسم الذي يظهر في التقرير (اختياري)</label>
+        <input id="name" placeholder="Client / Project name">
+      </div>
+      <div class="f">
+        <label for="pkg">الباقة</label>
+        <div class="pk">
+          <label><input type="radio" name="pkg" value="single" checked><b>$19</b><span>Single</span><small>محفظة واحدة</small></label>
+          <label><input type="radio" name="pkg" value="double"><b>$29</b><span>Double</span><small>محفظتان</small></label>
+          <label><input type="radio" name="pkg" value="rush"><b>$39</b><span>Rush</span><small>خلال 15 دقيقة</small></label>
+        </div>
+      </div>
+      <div class="f" id="addr2Wrap" style="display:none">
+        <label for="addr2">عنوان المحفظة الثانية / Second wallet address</label>
+        <input id="addr2" dir="ltr" autocomplete="off" spellcheck="false" placeholder="Second address">
+        <div class="err" id="addr2Err">العنوان الثاني غير صالح.</div>
+      </div>
+      <div class="row">
+        <div class="f"><label for="contact">بريدك أو تيليجرام / Email or Telegram</label><input id="contact" dir="ltr" placeholder="you@mail.com or @username"></div>
+        <div class="f"><label for="coin">طريقة الدفع / Payment</label>
+          <select id="coin"><option>USDT (Solana)</option><option>PayPal</option><option>أتفق مع البائع / Discuss</option></select></div>
+      </div>
+      <div class="total"><span>الإجمالي</span><b id="total">$19</b></div>
+      <div class="btns">
+        <button type="submit">إرسال الطلب / Send order</button>
+        <button type="button" class="ghost" id="copyBtn">نسخ الطلب / Copy</button>
+      </div>
+      <div id="out"></div>
+      <div class="note">لا ترسل أبداً عبارة الاسترداد (seed phrase) أو المفتاح الخاص. هذا النموذج لا يتصل بأي محفظة ولا يوقّع أي معاملة.
+      <br>بعد الإرسال ستصلك معاينة قبل الدفع إن طلبت ذلك. التقرير ليس استشارة مالية أو ضريبية.</div>
+    </div>
+  </form>
+</div>
+
+<script>
+const CFG = { telegram: "", whatsapp: "", email: "" };
+const $ = id => document.getElementById(id);
+const B58 = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+const PRICES = { single: 19, double: 29, rush: 39 };
+const pkg = () => document.querySelector('input[name=pkg]:checked').value;
+
+function sync() {
+  const p = pkg();
+  $('total').textContent = '$' + PRICES[p];
+  $('addr2Wrap').style.display = p === 'double' ? '' : 'none';
+}
+document.querySelectorAll('input[name=pkg]').forEach(r => r.addEventListener('change', sync));
+sync();
+
+function validateAddr(input, errEl, okEl) {
+  const v = input.value.trim();
+  const good = B58.test(v);
+  input.style.borderColor = v ? (good ? '#2f7d55' : '#7d2f38') : '';
+  if (errEl) errEl.style.display = v && !good ? 'block' : 'none';
+  if (okEl) okEl.style.display = good ? 'block' : 'none';
+  return good;
+}
+$('addr').addEventListener('input', () => validateAddr($('addr'), $('addrErr'), $('addrOk')));
+$('addr2').addEventListener('input', () => validateAddr($('addr2'), $('addr2Err'), null));
+
+function buildOrder() {
+  const p = pkg();
+  const a = $('addr').value.trim(), a2 = $('addr2').value.trim();
+  const name = $('name').value.trim() || '—';
+  const contact = $('contact').value.trim() || '—';
+  const coin = $('coin').value;
+  const lines = [
+    'New Solana Wallet Report order',
+    'Package: ' + p + ' ($' + PRICES[p] + ')',
+    'Wallet 1: ' + a
+  ];
+  if (p === 'double') lines.push('Wallet 2: ' + a2);
+  lines.push('Name on report: ' + name, 'Contact: ' + contact, 'Payment: ' + coin);
+  return lines.join('\n');
+}
+
+$('f').addEventListener('submit', e => {
+  e.preventDefault();
+  const ok1 = validateAddr($('addr'), $('addrErr'), $('addrOk'));
+  const ok2 = pkg() !== 'double' || validateAddr($('addr2'), $('addr2Err'), null);
+  if (!ok1 || !ok2) { $('addr').focus(); return; }
+  const text = buildOrder();
+  $('out').style.display = 'block';
+  $('out').textContent = text;
+  navigator.clipboard && navigator.clipboard.writeText(text).catch(() => {});
+  const enc = encodeURIComponent(text);
+  if (CFG.telegram) window.open('https://t.me/' + CFG.telegram + '?text=' + enc, '_blank');
+  else if (CFG.whatsapp) window.open('https://wa.me/' + CFG.whatsapp + '?text=' + enc, '_blank');
+  else if (CFG.email) window.location.href = 'mailto:' + CFG.email + '?subject=Wallet%20report%20order&body=' + enc;
+});
+
+$('copyBtn').addEventListener('click', () => {
+  const text = buildOrder();
+  navigator.clipboard && navigator.clipboard.writeText(text);
+  $('out').style.display = 'block';
+  $('out').textContent = text + '\n\n(copied)';
+});
+</script>
+</body>
+</html>
