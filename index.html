@@ -1,19 +1,21 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>طلب تقرير محفظة — Solana Wallet Report</title>
+<title>Solana Wallet Report — $19 · PDF + CSV in 24h</title>
+<meta name="description" content="Professional Solana wallet activity report: transactions, balances, token flows and monthly summary. PDF + HTML + CSV delivered within 24 hours. Pay with USDT (Solana).">
 <style>
 :root{--bg:#0f1115;--card:#171a21;--line:#232834;--tx:#e6e8ee;--mut:#9aa4b2;--ok:#59d18a;--bad:#f0747a;--acc:#6ea8fe}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif}
 .wrap{max-width:720px;margin:0 auto;padding:28px 18px 60px}
-h1{font-size:24px;margin:0 0 6px}
-.sub{color:var(--mut);font-size:13.5px;line-height:1.6}
+h1{font-size:26px;margin:0 0 8px;letter-spacing:-.01em}
+.sub{color:var(--mut);font-size:14px;line-height:1.65}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:16px}
+h2{font-size:14px;margin:0 0 12px;letter-spacing:.04em;text-transform:uppercase;color:var(--mut)}
 label{display:block;font-size:12px;color:var(--mut);margin:0 0 6px;letter-spacing:.03em}
-input,select,textarea{width:100%;background:#0d1016;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit}
+input,select{width:100%;background:#0d1016;color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit}
 input:focus,select:focus{outline:2px solid var(--acc);outline-offset:0;border-color:transparent}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .f{margin-bottom:12px}
@@ -34,61 +36,91 @@ button.ghost{background:#1b2130;color:var(--tx);border:1px solid var(--line)}
 .total{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:14px}
 .total b{font-size:20px}
 .note{font-size:11.5px;color:var(--mut);margin-top:14px;line-height:1.6}
-#out{display:none;direction:ltr;text-align:left;white-space:pre-wrap;background:#0d1016;border:1px solid var(--line);border-radius:8px;padding:12px;font-family:ui-monospace,Consolas,monospace;font-size:12px;margin-top:12px}
+#out{display:none;text-align:left;white-space:pre-wrap;background:#0d1016;border:1px solid var(--line);border-radius:8px;padding:12px;font-family:ui-monospace,Consolas,monospace;font-size:12px;margin-top:12px}
+.pay{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+code.addr{flex:1 1 320px;word-break:break-all;background:#0d1016;border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;color:var(--tx)}
+a{color:var(--acc)}
+.feat{margin:0;padding-left:18px;color:var(--mut);font-size:13px;line-height:1.8}
+.feat b{color:var(--tx)}
 @media(max-width:560px){.row{grid-template-columns:1fr}.pk{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>تقرير نشاط محفظة سولانا</h1>
-  <div class="sub">Solana Wallet Activity Report — $19 · تسليم خلال دقائق · تقرير HTML + PDF + CSV.
-  <br>أدخل <b>العنوان العام فقط</b>. لا نطلب عبارة الاسترداد أو المفتاح الخاص، ولا ربط محفظة.</div>
+  <h1>Solana Wallet Activity Report</h1>
+  <div class="sub">A clean, professional report for any <b>public</b> Solana wallet: transactions, balances, token flows and a monthly summary — delivered as <b>PDF + HTML + CSV</b>, usually within a few hours (max 24h).</div>
+
+  <div class="card">
+    <h2>What you get</h2>
+    <ul class="feat">
+      <li>Transaction history with date, type, amount and counterparty</li>
+      <li>Current balances incl. USD values for known tokens</li>
+      <li>Token in/out flows and monthly activity summary</li>
+      <li>PDF + interactive HTML + CSV, in English</li>
+    </ul>
+  </div>
 
   <form id="f" novalidate>
     <div class="card">
+      <h2>Order</h2>
       <div class="f">
-        <label for="addr">عنوان المحفظة العامة / Public wallet address</label>
+        <label for="addr">Public wallet address</label>
         <input id="addr" dir="ltr" autocomplete="off" spellcheck="false" placeholder="H8sMJSCQ...">
-        <div class="hint">32–44 حرفاً من base58، بدون مسافات. ابحث عنه في محفظتك تحت «Receive».</div>
-        <div class="err" id="addrErr">العنوان غير صالح — تحقق من الطول والأحرف.</div>
-        <div class="ok" id="addrOk">العنوان صحيح شكلياً.</div>
+        <div class="hint">32–44 base58 characters. Find it in your wallet under “Receive”. Read-only — no wallet connection.</div>
+        <div class="err" id="addrErr">Invalid address — check the length and characters.</div>
+        <div class="ok" id="addrOk">Address format looks valid.</div>
       </div>
       <div class="f">
-        <label for="name">الاسم الذي يظهر في التقرير (اختياري)</label>
-        <input id="name" placeholder="Client / Project name">
+        <label for="name">Name on the report (optional)</label>
+        <input id="name" placeholder="Client / project name">
       </div>
       <div class="f">
-        <label for="pkg">الباقة</label>
+        <label>Package</label>
         <div class="pk">
-          <label><input type="radio" name="pkg" value="single" checked><b>$19</b><span>Single</span><small>محفظة واحدة</small></label>
-          <label><input type="radio" name="pkg" value="double"><b>$29</b><span>Double</span><small>محفظتان</small></label>
-          <label><input type="radio" name="pkg" value="rush"><b>$39</b><span>Rush</span><small>خلال 15 دقيقة</small></label>
+          <label><input type="radio" name="pkg" value="single" checked><b>$19</b><span>Single</span><small>1 wallet</small></label>
+          <label><input type="radio" name="pkg" value="double"><b>$29</b><span>Double</span><small>2 wallets</small></label>
+          <label><input type="radio" name="pkg" value="rush"><b>$39</b><span>Rush</span><small>within 1–2 hours</small></label>
         </div>
       </div>
       <div class="f" id="addr2Wrap" style="display:none">
-        <label for="addr2">عنوان المحفظة الثانية / Second wallet address</label>
+        <label for="addr2">Second wallet address</label>
         <input id="addr2" dir="ltr" autocomplete="off" spellcheck="false" placeholder="Second address">
-        <div class="err" id="addr2Err">العنوان الثاني غير صالح.</div>
+        <div class="err" id="addr2Err">Invalid second address.</div>
       </div>
       <div class="row">
-        <div class="f"><label for="contact">بريدك أو تيليجرام / Email or Telegram</label><input id="contact" dir="ltr" placeholder="you@mail.com or @username"></div>
-        <div class="f"><label for="coin">طريقة الدفع / Payment</label>
-          <select id="coin"><option>USDT (Solana)</option><option>PayPal</option><option>أتفق مع البائع / Discuss</option></select></div>
+        <div class="f"><label for="contact">Email or Telegram</label><input id="contact" dir="ltr" placeholder="you@mail.com or @username"></div>
+        <div class="f"><label for="coin">Payment method</label>
+          <select id="coin"><option>USDT (Solana)</option><option>Other — discuss first</option></select></div>
       </div>
-      <div class="total"><span>الإجمالي</span><b id="total">$19</b></div>
+      <div class="total"><span>Total</span><b id="total">$19</b></div>
       <div class="btns">
-        <button type="submit">إرسال الطلب / Send order</button>
-        <button type="button" class="ghost" id="copyBtn">نسخ الطلب / Copy</button>
+        <button type="submit">Send order</button>
+        <button type="button" class="ghost" id="copyBtn">Copy order</button>
       </div>
       <div id="out"></div>
-      <div class="note">لا ترسل أبداً عبارة الاسترداد (seed phrase) أو المفتاح الخاص. هذا النموذج لا يتصل بأي محفظة ولا يوقّع أي معاملة.
-      <br>بعد الإرسال ستصلك معاينة قبل الدفع إن طلبت ذلك. التقرير ليس استشارة مالية أو ضريبية.</div>
     </div>
   </form>
+
+  <div class="card">
+    <h2>Pay with USDT (Solana network)</h2>
+    <div class="pay">
+      <code class="addr" id="payAddr">FCA3C1UGG542J5rUiGT3MtdCLmS2ZgDVFVz2Drj2uUfy</code>
+      <button type="button" class="ghost" id="payCopy">Copy</button>
+      <a href="https://solscan.io/account/FCA3C1UGG542J5rUiGT3MtdCLmS2ZgDVFVz2Drj2uUfy" target="_blank" rel="noopener">Verify on Solscan</a>
+    </div>
+    <div class="hint">Send the exact package amount in <b>USDT on Solana (SPL)</b>. Do not use other networks. After sending, reply with the transaction signature so the order can be matched.</div>
+  </div>
+
+  <div class="note">
+    Never share your seed phrase or private key. This page never connects to a wallet and never signs anything.<br>
+    I only need the public address — nothing else is accessed. Reports are informational, not financial or tax advice.<br>
+    Preview before payment available on request · Refund if the report cannot be produced.
+  </div>
 </div>
 
 <script>
 const CFG = { telegram: "", whatsapp: "213560926477", email: "" };
+const PAY = "FCA3C1UGG542J5rUiGT3MtdCLmS2ZgDVFVz2Drj2uUfy";
 const $ = id => document.getElementById(id);
 const B58 = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 const PRICES = { single: 19, double: 29, rush: 39 };
@@ -149,6 +181,12 @@ $('copyBtn').addEventListener('click', () => {
   navigator.clipboard && navigator.clipboard.writeText(text);
   $('out').style.display = 'block';
   $('out').textContent = text + '\n\n(copied)';
+});
+
+$('payCopy').addEventListener('click', () => {
+  navigator.clipboard && navigator.clipboard.writeText(PAY);
+  $('payCopy').textContent = 'Copied';
+  setTimeout(() => { $('payCopy').textContent = 'Copy'; }, 1500);
 });
 </script>
 </body>
